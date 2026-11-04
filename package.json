@@ -1,0 +1,29 @@
+{
+  "name": "ai-barbershop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n web,bot -c cyan,magenta \"next dev\" \"node bot/index.mjs\"",
+    "dev:web": "next dev",
+    "bot": "node bot/index.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "tunnel": "npx --yes cloudflared tunnel --url http://localhost:3000",
+    "dev:mini": "node scripts/dev-mini.mjs"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "concurrently": "^10.0.6",
+    "dotenv": "^18.0.9",
+    "grammy": "^1.46.0",
+    "next": "14.2.35",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35"
+  }
+}
