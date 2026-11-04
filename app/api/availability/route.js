@@ -5,7 +5,9 @@ import {
   listSlots,
 } from "../../../lib/services/availabilityService.js";
 
-export function GET(request) {
+export const dynamic = "force-dynamic";
+
+export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const barberId = Number(searchParams.get("barberId"));
@@ -16,12 +18,15 @@ export function GET(request) {
       return json({ error: "Нужны мастер и услуга." }, 400);
     }
 
-    const db = getDb();
+    const db = await getDb();
     if (date) {
-      return json({ date, slots: listSlots(db, { barberId, serviceId, date }) });
+      return json({
+        date,
+        slots: await listSlots(db, { barberId, serviceId, date }),
+      });
     }
 
-    return json({ days: listOpenDays(db, { barberId, serviceId }) });
+    return json({ days: await listOpenDays(db, { barberId, serviceId }) });
   } catch (error) {
     return handleError(error);
   }

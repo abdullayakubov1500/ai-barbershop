@@ -1,59 +1,55 @@
 # Остриё
 
-Барбершоп в Казани: лендинг, запись через календарь, админка мастеров и Telegram-бот. Сайт и бот пишут в одну SQLite-базу. Каждая заявка уходит в Telegram-группу, если задан токен.
+Барбершоп в Казани: лендинг, запись через календарь, админка, Telegram-бот и Mini App. Данные живут в Neon Postgres. На Vercel бот принимает апдейты через webhook.
 
-## Запуск
+## Запуск локально
 
 ```bash
 npm install
 copy .env.example .env.local
+```
+
+В `.env.local` укажите `DATABASE_URL` из Neon. Затем:
+
+```bash
 npm run dev
 ```
 
-Сайт: http://localhost:3000
-
+Сайт: http://localhost:3000  
 Админка: http://localhost:3000/admin  
-Пароль по умолчанию: `ostrio-admin`
+Mini App в браузере: http://localhost:3000/mini
 
-Без `TELEGRAM_BOT_TOKEN` сайт работает, бот просто ждёт токен.
+Пароль админки по умолчанию: `ostrio-admin`
 
 ## Telegram
 
 1. Создайте бота у [@BotFather](https://t.me/BotFather) и вставьте токен в `TELEGRAM_BOT_TOKEN`.
 2. Добавьте бота в рабочую группу и дайте право писать сообщения.
-3. Узнайте id группы (например, через @userinfobot или лог апдейтов) и укажите `TELEGRAM_GROUP_CHAT_ID`.
-4. Имя бота без `@` положите в `NEXT_PUBLIC_BOT_USERNAME`, чтобы на лендинге появилась кнопка.
+3. Укажите `TELEGRAM_GROUP_CHAT_ID`.
+4. Имя бота без `@` положите в `NEXT_PUBLIC_BOT_USERNAME`.
 
-После этого `npm run dev` поднимает сайт и бота вместе.
+Локально `npm run dev` поднимает сайт и long polling бота. На Vercel бот работает только через webhook.
 
-## Telegram Mini App
+## Mini App
 
-Календарь записи — страница `/mini`.
+Календарь записи — `/mini`. Telegram принимает HTTPS.
 
-Локально в браузере (без Telegram):
+Локально в браузере: http://localhost:3000/mini  
+Локально в боте: `npm run dev:mini` (HTTPS-туннель).
 
-```bash
-npm run dev
-```
-
-Откройте http://localhost:3000/mini — тот же календарь и бланк записи.
-
-Чтобы открыть Mini App внутри бота с локальной машины, нужен HTTPS-туннель:
-
-```bash
-npm run dev:mini
-```
-
-Скрипт поднимет туннель, сайт и бота. В консоли будет адрес вида `https://….trycloudflare.com/mini`; кнопка «Календарь» в боте укажет на него.
-
-Когда опубликуете сайт, в `.env.local` задайте постоянный адрес:
+После публикации на Vercel:
 
 ```
-TELEGRAM_WEBAPP_URL=https://ваш-домен/mini
+TELEGRAM_WEBAPP_URL=https://ваш-домен.vercel.app/mini
 ```
 
-и запускайте обычный `npm run dev` или `npm start`.
+Откройте один раз `/api/telegram/setup?secret=CRON_SECRET`, чтобы повесить webhook и кнопку «Календарь».
 
-## Данные
+## Neon и Vercel
 
-При первом запуске создаётся `data/ostrio.db` с мастерами, услугами и записями на ближайшие дни. Даты считаются от текущего дня в часовом поясе `Europe/Moscow`.
+1. Создайте проект в [Neon](https://console.neon.tech) и скопируйте connection string в `DATABASE_URL`.
+2. В Vercel задайте те же переменные, что в `.env.example`.
+3. `TELEGRAM_WEBAPP_URL` должен указывать на `https://<vercel-домен>/mini`.
+4. Cron `/api/cron/reminders` шлёт напоминания за час и за 5 минут. На Hobby Vercel он запускается раз в сутки (06:00 UTC); между запусками напоминания ещё обрабатываются при апдейтах бота.
+
+При первом запросе схема и демо-данные создаются сами.

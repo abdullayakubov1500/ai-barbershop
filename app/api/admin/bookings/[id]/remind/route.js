@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export async function POST(_request, { params }) {
   try {
     requireAdmin();
-    const booking = await sendManualReminder(getDb(), Number(params.id));
+    const booking = await sendManualReminder(await getDb(), Number(params.id));
     return json({ ok: true, booking });
   } catch (error) {
     return handleError(error);

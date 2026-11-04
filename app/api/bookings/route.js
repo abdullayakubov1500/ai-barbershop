@@ -13,7 +13,7 @@ export async function POST(request) {
     const initData = String(body.initData || "").trim();
 
     if (body.localPreview && isLocalDevRequest(request)) {
-      const booking = await createBooking(getDb(), {
+      const booking = await createBooking(await getDb(), {
         ...body,
         source: "telegram",
         telegramUserId: "local-preview",
@@ -24,7 +24,7 @@ export async function POST(request) {
 
     if (initData) {
       const user = verifyTelegramWebAppUser(initData, process.env.TELEGRAM_BOT_TOKEN);
-      const booking = await createBooking(getDb(), {
+      const booking = await createBooking(await getDb(), {
         ...body,
         source: "telegram",
         telegramUserId: String(user.id),
@@ -36,7 +36,7 @@ export async function POST(request) {
       return json({ booking }, 201);
     }
 
-    const booking = await createBooking(getDb(), { ...body, source: "site" });
+    const booking = await createBooking(await getDb(), { ...body, source: "site" });
     return json({ booking }, 201);
   } catch (error) {
     return handleError(error);

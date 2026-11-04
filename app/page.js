@@ -14,11 +14,11 @@ import { listServices } from "../lib/repositories/serviceRepository.js";
 import { listBarbers } from "../lib/repositories/barberRepository.js";
 import { listTodayAvailability } from "../lib/services/availabilityService.js";
 
-export default function HomePage() {
-  const db = getDb();
-  const services = listServices(db);
-  const barbers = listBarbers(db, { activeOnly: true });
-  const today = listTodayAvailability(db);
+export default async function HomePage() {
+  const db = await getDb();
+  const services = await listServices(db);
+  const barbers = await listBarbers(db, { activeOnly: true });
+  const today = await listTodayAvailability(db);
   const bot = process.env.NEXT_PUBLIC_BOT_USERNAME;
 
   return (

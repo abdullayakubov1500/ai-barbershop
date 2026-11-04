@@ -14,7 +14,7 @@
     "dev:mini": "node scripts/dev-mini.mjs"
   },
   "dependencies": {
-    "better-sqlite3": "^13.0.3",
+    "@neondatabase/serverless": "^1.2.0",
     "concurrently": "^10.0.6",
     "dotenv": "^18.0.9",
     "grammy": "^1.46.0",

@@ -3,12 +3,14 @@ import { handleError, json } from "../../../lib/http.js";
 import { listBarbers } from "../../../lib/repositories/barberRepository.js";
 import { listServices } from "../../../lib/repositories/serviceRepository.js";
 
-export function GET() {
+export const dynamic = "force-dynamic";
+
+export async function GET() {
   try {
-    const db = getDb();
+    const db = await getDb();
     return json({
-      services: listServices(db),
-      barbers: listBarbers(db, { activeOnly: true }),
+      services: await listServices(db),
+      barbers: await listBarbers(db, { activeOnly: true }),
     });
   } catch (error) {
     return handleError(error);

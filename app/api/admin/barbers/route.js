@@ -5,10 +5,12 @@ import {
   saveBarber,
 } from "../../../../lib/services/barberAdminService.js";
 
-export function GET() {
+export const dynamic = "force-dynamic";
+
+export async function GET() {
   try {
     requireAdmin();
-    return json({ barbers: listBarbersWithSchedule(getDb()) });
+    return json({ barbers: await listBarbersWithSchedule(await getDb()) });
   } catch (error) {
     return handleError(error);
   }
@@ -18,7 +20,7 @@ export async function POST(request) {
   try {
     requireAdmin();
     const body = await readBody(request);
-    const barber = saveBarber(getDb(), body);
+    const barber = await saveBarber(await getDb(), body);
     return json({ barber }, 201);
   } catch (error) {
     return handleError(error);
